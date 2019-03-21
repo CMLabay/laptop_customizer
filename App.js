@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 import Header from './Header/Header';
-import Form from './Form/Form';
+import FeatureList from './FeatureList/FeatureList';
 import Summary from './Summary/Summary';
+import Total from './Total/Total';
 
 class App extends Component {
   constructor(props){
@@ -29,7 +30,7 @@ class App extends Component {
     }
   }
 
-  updateFeature(feature, newValue) {
+  updateFeature = (feature, newValue) => {
     const selected = Object.assign({}, this.state.selected);
     selected[feature] = newValue;
     this.setState({
@@ -38,51 +39,26 @@ class App extends Component {
   }
 
   render() {
-    const summary = Object.keys(this.state.selected)
-          .map(key => <div className="summary__option" key={key}>
-            <div className="summary__option__label">{key}  </div>
-            <div className="summary__option__value">{this.state.selected[key].name}</div>
-            <div className="summary__option__cost">
-              { new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD'})
-                  .format(this.state.selected[key].cost) }
-            </div>
-        </div>)
 
     const total = Object.keys(this.state.selected)
           .reduce((acc, curr) => acc + this.state.selected[curr].cost, 0);    
 
-
-    const features = Object.keys(this.props.features)
-          .map(key => {
-            const options = this.props.features[key].map((item, index) => {
-              const selectedClass = item.name === this.state.selected[key].name ? 'feature__selected' : '';
-              const featureClass = 'feature__option ' + selectedClass;
-              return <li key={index} className="feature__item">
-                <div className={featureClass}
-                  
-                  onClick={e => this.updateFeature(key, item)}>
-                    { item.name }
-                    ({ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD'})
-                      .format(item.cost) })
-                </div>
-              </li>
-            });
-
-            return <div className="feature" key={key}>
-              <div className="feature__name">{key}</div>
-              <ul className="feature__list">
-                { options }
-              </ul>
-            </div>
-          });      
     return (
       <div className="App">
-        <Header></Header>    
+        <Header/>    
         <main>
-          <Form feature={features}></Form>
+          <FeatureList 
+            features={this.props.features} 
+            selected={this.state.selected} 
+            updateFeature={this.updateFeature} 
+          />
+          <section className="main__summary">
+            <h3>NEW GREENLEAF 2018</h3>
             <Summary
-              summary={summary} 
-              total={new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD'}).format(total)}/>
+              selected={this.state.selected}
+            />
+            <Total total={total}/>
+          </section>
         </main>
       </div>
     );

@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
-import Total from '../Total/Total';
 
 
 class Summary extends Component{
     render(){
-        return(
-            <section className="main__summary">
-                <h3>NEW GREENLEAF 2018</h3>
-                {this.props.summary} 
-                <Total total={this.props.total}/>
-            </section>
-        );
+        return Object.keys(this.props.selected)
+                .map(key => 
+                <div className="summary__option" key={key}>
+                    <div className="summary__option__label">{key}  </div>
+                    <div className="summary__option__value">{this.props.selected[key].name}</div>
+                    <div className="summary__option__cost">
+                        { new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD'})
+                        .format(this.props.selected[key].cost) }
+                    </div>
+                </div>)
     }
 }
 export default Summary;
